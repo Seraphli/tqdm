@@ -417,19 +417,26 @@ class tqdm(Comparable):
                     else ' '
 
             else:
-                bar_length, frac_bar_length = divmod(int(frac * N_BARS * 8), 8)
+                bar_length, frac_bar_length = divmod(int(frac * N_BARS * 5), 5)
 
-                bar = _unich(0x2588) * bar_length
-                frac_bar = _unich(0x2590 - frac_bar_length) \
-                    if frac_bar_length else ' '
+                bar = ' ' * bar_length
+                frac_bar = '<' if frac_bar_length else ' '
 
             # whitespace padding
-            if bar_length < N_BARS:
-                full_bar = bar + frac_bar + \
-                    ' ' * max(N_BARS - bar_length - 1, 0)
+            if ascii:
+                if bar_length < N_BARS:
+                    full_bar = bar + frac_bar + \
+                        ' ' * max(N_BARS - bar_length - 1, 0)
+                else:
+                    full_bar = bar + \
+                        ' ' * max(N_BARS - bar_length, 0)
             else:
-                full_bar = bar + \
-                    ' ' * max(N_BARS - bar_length, 0)
+                if bar_length < N_BARS:
+                    full_bar = bar + frac_bar + \
+                        _unich(0x2022) * max(N_BARS - bar_length - 1, 0)
+                else:
+                    full_bar = bar + \
+                        _unich(0x2022) * max(N_BARS - bar_length, 0)
 
             # Piece together the bar parts
             return l_bar + full_bar + r_bar
